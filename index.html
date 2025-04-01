@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全工具导航</title>
+    <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-gray: #8E8E93;
+            --apple-light-gray: #F2F2F7;
+            --apple-dark: #1C1C1E;
+            --apple-white: #FFFFFF;
+            --apple-red: #FF3B30;
+            --apple-green: #34C759;
+            --apple-yellow: #FFCC00;
+            --apple-purple: #AF52DE;
+            --apple-pink: #FF2D55;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--apple-dark);
+            background-color: var(--apple-light-gray);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--apple-blue), var(--apple-purple));
+            color: var(--apple-white);
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .category {
+            background: var(--apple-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .category:hover {
+            transform: translateY(-2px);
+        }
+
+        .category h2 {
+            color: var(--apple-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--apple-light-gray);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: var(--apple-white);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .tool-card h3 {
+            color: var(--apple-dark);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: var(--apple-gray);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .tool-card .links {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tool-card a {
+            color: var(--apple-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: var(--apple-light-gray);
+            transition: all 0.2s ease;
+        }
+
+        .tool-card a:hover {
+            background: var(--apple-blue);
+            color: var(--apple-white);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--apple-white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            padding: 4px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--apple-white);
+            color: var(--apple-gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-button:hover {
+            background: var(--apple-light-gray);
+        }
+
+        .filter-button.active {
+            background: var(--apple-blue);
+            color: var(--apple-white);
+        }
+
+        .update-info {
+            font-size: 0.85rem;
+            color: var(--apple-gray);
+            margin-top: 8px;
+        }
+
+        .update-info.new {
+            color: var(--apple-green);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 24px;
+            color: var(--apple-gray);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .error-message {
+            color: var(--apple-red);
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .stars {
+            color: var(--apple-yellow);
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .rating-count {
+            color: var(--apple-gray);
+            font-size: 0.9rem;
+        }
+
+        .release-info {
+            font-size: 0.85rem;
+            color: var(--apple-gray);
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--apple-light-gray);
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .release-info.new {
+            border-left: 3px solid var(--apple-green);
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .rating-input button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            background: var(--apple-light-gray);
+            color: var(--apple-gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .rating-input button:hover {
+            background: var(--apple-blue);
+            color: var(--apple-white);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 0;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .category {
+                padding: 16px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .tool-card {
+                padding: 16px;
+            }
+
+            .filter-buttons {
+                gap: 8px;
+            }
+
+            .filter-button {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .search-box {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            .category h2 {
+                font-size: 1.3rem;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .rating-input {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>安全工具导航</h1>
+            <p>收集整理全网优秀的安全工具</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <input type="text" class="search-box" placeholder="搜索工具..." id="searchInput">
+        
+        <div class="filter-buttons" id="filterButtons">
+            <!-- 分类按钮将通过 JavaScript 动态生成 -->
+        </div>
+
+        <div class="loading" id="loading">
+            正在检查更新...
+        </div>
+
+        <div id="toolsContainer">
+            <!-- 工具卡片将通过 JavaScript 动态生成 -->
+        </div>
+    </div>
+
+    <script src="tools.js"></script>
+    <script>
+        // 生成分类按钮
+        function generateFilterButtons() {
+            const filterButtons = document.getElementById('filterButtons');
+            const categories = new Set(tools.map(tool => tool.category));
+            
+            // 添加"全部"按钮
+            filterButtons.innerHTML = `
+                <button class="filter-button active" data-category="all">全部</button>
+            `;
+            
+            // 添加其他分类按钮
+            categories.forEach(category => {
+                if (category) {  // 确保分类不为空
+                    const button = document.createElement('button');
+                    button.className = 'filter-button';
+                    button.dataset.category = category;
+                    button.textContent = category;
+                    filterButtons.appendChild(button);
+                }
+            });
+        }
+
+        // 渲染工具卡片
+        function renderTools(filteredTools = tools) {
+            const container = document.getElementById('toolsContainer');
+            container.innerHTML = '';
+
+            // 按分类组织工具
+            const categorizedTools = {};
+            filteredTools.forEach(tool => {
+                if (!categorizedTools[tool.category]) {
+                    categorizedTools[tool.category] = [];
+                }
+                categorizedTools[tool.category].push(tool);
+            });
+
+            // 渲染每个分类
+            Object.entries(categorizedTools).forEach(([category, categoryTools]) => {
+                if (!category) return;  // 跳过空分类
+                
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                categoryDiv.innerHTML = `
+                    <h2>${category}</h2>
+                    <div class="tools-grid">
+                        ${categoryTools.map(tool => `
+                            <div class="tool-card" data-category="${tool.category}">
+                                <h3>${tool.name}</h3>
+                                <p>${tool.description}</p>
+                                <div class="rating">
+                                    <div class="stars">${'★'.repeat(Math.floor(tool.rating))}${'☆'.repeat(5-Math.floor(tool.rating))}</div>
+                                    <div class="rating-count">(${tool.ratingCount} 次评分)</div>
+                                </div>
+                                <div class="rating-input">
+                                    <button onclick="rateTool('${tool.name}', 1)">1星</button>
+                                    <button onclick="rateTool('${tool.name}', 2)">2星</button>
+                                    <button onclick="rateTool('${tool.name}', 3)">3星</button>
+                                    <button onclick="rateTool('${tool.name}', 4)">4星</button>
+                                    <button onclick="rateTool('${tool.name}', 5)">5星</button>
+                                </div>
+                                <div class="links">
+                                    <a href="${tool.github}" target="_blank">GitHub</a>
+                                    <div class="update-info" data-github="${tool.github}">检查更新中...</div>
+                                </div>
+                                <div class="release-info" data-github="${tool.github}">获取最新版本信息中...</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(categoryDiv);
+            });
+
+            // 检查所有GitHub仓库的更新和release信息
+            checkGitHubUpdates();
+            checkGitHubReleases();
+        }
+
+        // 检查GitHub仓库更新
+        async function checkGitHubUpdates() {
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+
+            const updateInfos = document.querySelectorAll('.update-info');
+            
+            for (const info of updateInfos) {
+                const githubUrl = info.dataset.github;
+                try {
+                    const response = await fetch(`https://api.github.com/repos/${githubUrl.split('/').slice(-2).join('/')}`);
+                    const data = await response.json();
+                    
+                    const lastUpdate = new Date(data.updated_at);
+                    const now = new Date();
+                    const daysDiff = Math.floor((now - lastUpdate) / (1000 * 60 * 60 * 24));
+                    
+                    info.textContent = `最后更新: ${daysDiff}天前`;
+                    if (daysDiff < 30) {
+                        info.classList.add('new');
+                    }
+                } catch (error) {
+                    info.textContent = '检查更新失败';
+                    info.classList.add('error-message');
+                }
+            }
+
+            loading.classList.remove('active');
+        }
+
+        // 检查GitHub仓库release信息
+        async function checkGitHubReleases() {
+            const releaseInfos = document.querySelectorAll('.release-info');
+            
+            for (const info of releaseInfos) {
+                const githubUrl = info.dataset.github;
+                try {
+                    const response = await fetch(`https://api.github.com/repos/${githubUrl.split('/').slice(-2).join('/')}/releases/latest`);
+                    const data = await response.json();
+                    
+                    if (data && data.tag_name) {
+                        const releaseDate = new Date(data.published_at);
+                        const now = new Date();
+                        const daysDiff = Math.floor((now - releaseDate) / (1000 * 60 * 60 * 24));
+                        
+                        // 限制更新说明的长度
+                        let body = data.body || '暂无更新说明';
+                        if (body.length > 100) {
+                            body = body.substring(0, 100) + '...';
+                        }
+                        
+                        info.innerHTML = `
+                            <strong>最新版本: ${data.tag_name}</strong><br>
+                            ${body}<br>
+                            <small>发布于 ${daysDiff} 天前</small>
+                        `;
+                        
+                        if (daysDiff < 30) {
+                            info.classList.add('new');
+                        }
+                    } else {
+                        info.textContent = '暂无发布版本';
+                    }
+                } catch (error) {
+                    info.textContent = '获取版本信息失败';
+                    info.classList.add('error-message');
+                }
+            }
+        }
+
+        // 工具评分功能
+        function rateTool(toolName, rating) {
+            const tool = tools.find(t => t.name === toolName);
+            if (tool) {
+                const totalRating = tool.rating * tool.ratingCount;
+                tool.ratingCount++;
+                tool.rating = (totalRating + rating) / tool.ratingCount;
+                renderTools(); // 重新渲染以更新评分显示
+            }
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchText = e.target.value.toLowerCase();
+            const filteredTools = tools.filter(tool => 
+                tool.name.toLowerCase().includes(searchText) || 
+                tool.description.toLowerCase().includes(searchText)
+            );
+            renderTools(filteredTools);
+        });
+
+        // 分类过滤
+        document.getElementById('filterButtons').addEventListener('click', function(e) {
+            if (e.target.classList.contains('filter-button')) {
+                // 更新按钮状态
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+
+                // 过滤工具
+                const category = e.target.dataset.category;
+                const filteredTools = category === 'all' 
+                    ? tools 
+                    : tools.filter(tool => tool.category === category);
+                renderTools(filteredTools);
+            }
+        });
+
+        // 初始渲染
+        generateFilterButtons();  // 先生成分类按钮
+        renderTools();  // 再渲染工具卡片
+    </script>
+</body>
+</html> 
